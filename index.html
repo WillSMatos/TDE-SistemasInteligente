@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Tarefas V1</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Gerenciador de Tarefas</h2>
+        
+        <div class="input-group">
+            <input type="text" id="taskInput" placeholder="Digite a nova tarefa..." onkeypress="handleKeyPress(event)">
+            <button onclick="addTask()">Cadastrar</button>
+        </div>
+
+        <ul id="taskList">
+            </ul>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
