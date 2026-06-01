@@ -2,19 +2,16 @@
 let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 let currentFilter = 'all';
 
-// Função para persistir os dados localmente (LocalStorage)
 function saveTasks() {
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
-// RF01 / RN01 / RN02 - Cadastrar tarefa com validação e prioridade
 function addTask() {
     const input = document.getElementById('taskInput');
     const prioritySelect = document.getElementById('priorityInput');
     const title = input.value.trim();
     const priority = prioritySelect.value;
 
-    // Validação de campo obrigatório
     if (!title) {
         alert('Atenção: O título da tarefa não pode ficar vazio!');
         return;
@@ -29,7 +26,7 @@ function addTask() {
     
     tasks.push(newTask);
     input.value = ''; 
-    prioritySelect.value = 'baixa'; // Retorna ao padrão
+    prioritySelect.value = 'baixa'; 
     
     saveTasks();
     renderTasks();
@@ -39,7 +36,6 @@ function handleKeyPress(event) {
     if (event.key === 'Enter') addTask();
 }
 
-// Concluir Tarefa
 function toggleTask(id) {
     const task = tasks.find(t => t.id === id);
     if (task) {
@@ -49,21 +45,18 @@ function toggleTask(id) {
     }
 }
 
-// Excluir Tarefa
 function deleteTask(id) {
     tasks = tasks.filter(t => t.id !== id);
     saveTasks();
     renderTasks();
 }
 
-// Editar Tarefa com validação
 function editTask(id) {
     const task = tasks.find(t => t.id === id);
     if (!task) return;
 
     const newTitle = prompt('Edite o nome da sua tarefa:', task.title);
     
-    // Se o usuário não cancelar o prompt
     if (newTitle !== null) {
         const trimmedTitle = newTitle.trim();
         if (!trimmedTitle) {
@@ -76,23 +69,27 @@ function editTask(id) {
     }
 }
 
-// Filtros por Status
 function setFilter(filterType) {
     currentFilter = filterType;
     
-    // Atualiza a parte visual dos botões
-    document.querySelectorAll('.filters button').forEach(btn => btn.classList.remove('active'));
-    document.getElementById(`btn-${filterType}`).classList.add('active');
+    const buttons = document.querySelectorAll('.filters button');
+    if (buttons.length > 0) {
+        buttons.forEach(btn => btn.classList.remove('active'));
+        const activeBtn = document.getElementById(`btn-${filterType}`);
+        if (activeBtn) activeBtn.classList.add('active');
+    }
 
     renderTasks();
 }
 
-// Renderização das tarefas
 function renderTasks() {
     const list = document.getElementById('taskList');
+    
+    // Trava de segurança para os testes do Jest
+    if (!list) return; 
+
     list.innerHTML = ''; 
 
-    // Aplica o filtro atual antes de renderizar
     let filteredTasks = tasks;
     if (currentFilter === 'pending') {
         filteredTasks = tasks.filter(t => !t.completed);
@@ -104,7 +101,6 @@ function renderTasks() {
         const li = document.createElement('li');
         if (task.completed) li.className = 'completed';
 
-        // Cores das tags de prioridade
         const priorityColors = {
             baixa: '#28a745',
             media: '#ffc107',
@@ -130,3 +126,11 @@ function renderTasks() {
 
 // Renderiza a lista na tela logo que a página carrega
 renderTasks();
+
+// Exporta as funções para o Jest (somente se estiver em ambiente Node)
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { 
+        addTask, toggleTask, deleteTask, editTask, setFilter, renderTasks, 
+        tasks, saveTasks 
+    };
+}
